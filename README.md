@@ -36,7 +36,7 @@ openssl pkcs12 -export -out certs/atlas-ti-dp.pfx \
 chmod 600 certs/atlas-ti-dp.pfx certs/atlas-ti-dp.key
 ```
 
-O comando solicitará a senha de exportação; informe exatamente a mesma do `.env`. O certificado acima serve para proteger chaves da aplicação, não é o certificado do site HTTPS. Copie para `certs/ldap-ca/` o certificado da autoridade certificadora que emitiu o certificado do LDAPS `192.168.20.14` (e do servidor secundário, se houver), em formato PEM e com extensão `.crt`. Se o arquivo recebido tiver extensão `.cer`, converta-o para PEM conforme as instruções abaixo. Confirme que o certificado é da CA emissora e que o certificado do LDAP foi emitido por ela. A API exige uma cadeia LDAPS confiável; não desativa a validação do certificado.
+O comando solicitará a senha de exportação; informe exatamente a mesma do `.env`. O certificado acima serve para proteger chaves da aplicação, não é o certificado do site HTTPS. Copie para `certs/ldap-ca/` o certificado da autoridade certificadora que emitiu o certificado do LDAPS (e do servidor secundário, se houver), em formato PEM e com extensão `.crt`. Se o arquivo recebido tiver extensão `.cer`, converta-o para PEM conforme as instruções abaixo. Confirme que o certificado é da CA emissora e que o certificado do LDAP foi emitido por ela. A API exige uma cadeia LDAPS confiável; não desativa a validação do certificado.
 
 Para converter o arquivo `.cer` fornecido pelo administrador do diretório, execute no servidor. O comando detecta se o arquivo de origem está em PEM ou DER e grava o resultado no local montado pelo Compose:
 
@@ -64,25 +64,25 @@ docker compose ps
 docker compose logs -f mariadb api web
 ```
 
-Abra `http://192.168.20.29:5225`. O Nginx serve o site e encaminha chamadas `/api/` para a API dentro da rede Docker. A API aguarda a base ficar saudável, inicializa as tabelas e configurações iniciais, e os dados são guardados em volumes nomeados: `atlas-ti-mariadb-data`, `atlas-ti-documents` e `atlas-ti-dataprotection`. Faça backup desses volumes e do certificado PFX. Nunca use `docker compose down -v` para uma parada normal, porque o `-v` remove os volumes e os dados.
+Abra. O Nginx serve o site e encaminha chamadas `/api/` para a API dentro da rede Docker. A API aguarda a base ficar saudável, inicializa as tabelas e configurações iniciais, e os dados são guardados em volumes nomeados: `atlas-ti-mariadb-data`, `atlas-ti-documents` e `atlas-ti-dataprotection`. Faça backup desses volumes e do certificado PFX. Nunca use `docker compose down -v` para uma parada normal, porque o `-v` remove os volumes e os dados.
 
-O mapeamento atual publica o banco em `192.168.20.29:8060`. No firewall do servidor, restrinja TCP/8060 aos computadores ou serviços administrativos que realmente precisarem conectar ao banco. O site usa TCP/5225. Se o endereço `192.168.20.29` não estiver configurado em uma interface do host Docker, substitua o IP à esquerda dos mapeamentos de portas pelo IP real do servidor.
+O mapeamento atual publica o banco em . No firewall do servidor, restrinja TCP/8060 aos computadores ou serviços administrativos que realmente precisarem conectar ao banco. O site usa TCP/5225. Se o endereço não estiver configurado em uma interface do host Docker, substitua o IP à esquerda dos mapeamentos de portas pelo IP real do servidor.
 
 > Se mesclar os serviços no Compose de outro sistema, execute os comandos dentro da pasta que contém esse arquivo e mantenha os caminhos relativos apontando para a pasta AtlasTI (por exemplo `./manual-ti/certs/...`). O Compose pode usar uma rede existente ou criar a própria; os três serviços do AtlasTI precisam compartilhar a mesma rede.
 
 ## Configuração manual (API no Windows)
 
-Para uso temporário fora do Docker, mantenha o banco no servidor e execute a API no Windows. Requisitos: .NET 10 SDK, conectividade até `192.168.20.29:8060` e acesso ao LDAPS `192.168.20.14:636` com certificado confiável. Configure a senha de `atlas_ti` quando o inicializador solicitar. Não coloque senhas no comando nem em `appsettings.json`.
+Para uso temporário fora do Docker, mantenha o banco no servidor e execute a API no Windows. Requisitos: .NET 10 SDK, conectividade até  e acesso ao LDAPS com certificado confiável. Configure a senha de `atlas_ti` quando o inicializador solicitar. Não coloque senhas no comando nem em `appsettings.json`.
 
 ```powershell
-.\Initialize-AtlasTi.ps1 -DatabaseHost "192.168.20.29" -DatabasePort 8060 -LdapHost "192.168.20.14" -LdapSecondaryHost "" -AdminLogin "icaro.admin"
+.\Initialize-AtlasTi.ps1 -DatabaseHost "" -DatabasePort  -LdapHost "" -LdapSecondaryHost "" -AdminLogin ""
 ```
 
 O login ocorre pelo LDAP com credenciais individuais; senhas pessoais não são armazenadas. Até dois servidores LDAPS podem ser configurados em Administração → Active Directory. A conta de consulta LDAP, Base DN e atributo de login são configurados nessa tela. A credencial de consulta é criptografada pela API antes de ser gravada no banco. A conta administradora inicial é `icaro.admin`; ela precisa existir no diretório para autenticar.
 
 ## Iniciar a API no Windows
 
-Requisitos: .NET 10 SDK, acesso ao NuGet.org (ou feed interno), conectividade até `192.168.20.29:8060` e acesso ao LDAP `192.168.20.14:636` com certificado LDAPS confiável.
+Requisitos: .NET 10 SDK, acesso ao NuGet.org (ou feed interno), conectividade até e acesso ao LDAP com certificado LDAPS confiável.
 
 Na pasta do projeto, execute:
 
@@ -90,12 +90,12 @@ Na pasta do projeto, execute:
 .\Initialize-AtlasTi.ps1
 ```
 
-O script solicita a senha do usuário `atlas_ti` configurada no `.env` do servidor. Não coloque senhas no comando nem em `appsettings.json`. O script restaura dependências, conecta ao MariaDB, cria as tabelas/categorias/papéis/permissões se a base estiver vazia, provisiona `icaro.admin` como administrador inicial e executa a API em `http://localhost:5225`.
+O script solicita a senha do usuário configurada no  do servidor. Não coloque senhas no comando nem em. O script restaura dependências, conecta ao MariaDB, cria as tabelas/categorias/papéis/permissões se a base estiver vazia, provisiona  como administrador inicial e executa a API em.
 
 Se preferir, altere os parâmetros ao iniciar:
 
 ```powershell
-.\Initialize-AtlasTi.ps1 -DatabaseHost "192.168.20.29" -DatabasePort 8060 -LdapHost "192.168.20.14" -LdapSecondaryHost "" -AdminLogin "icaro.admin"
+.\Initialize-AtlasTi.ps1 -DatabaseHost "" -DatabasePort 8060 -LdapHost "" -LdapSecondaryHost "" -AdminLogin ""
 ```
 
 O login ocorre pelo LDAP com credenciais individuais; senhas pessoais não são armazenadas. Até dois servidores LDAPS podem ser configurados na tela Administração → Active Directory. Para JIT, associe grupos do AD aos papéis Administrador, Aprovador, Editor e Leitor. Configure Base DN, atributo de login e uma conta de consulta sem privilégio administrativo, com leitura/pesquisa na árvore do diretório; sua credencial é criptografada pela API antes de ser gravada. As páginas do portal exigem sessão LDAP válida e os endpoints de dados validam o JWT e as permissões.
