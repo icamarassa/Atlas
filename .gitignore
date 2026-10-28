@@ -1,0 +1,12 @@
+.env
+api/bin/
+api/obj/
+.dotnet-cli/
+.nuget-packages/
+.nuget-http-cache/
+.nuget-plugin-cache/
+api/App_Data/
+certs/*.pfx
+certs/*.key
+certs/*.crt
+certs/ldap-ca/*.crt

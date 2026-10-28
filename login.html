@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f6fb"><link rel="icon" href="./atlas-tech.svg" type="image/svg+xml">
+  <title>Entrar — Atlas TI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #f5f6fa;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      color: #1c2334;
+      -webkit-font-smoothing: antialiased;
+      transition: background .5s ease;
+    }
+
+    .login-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* ============ PAINEL VISUAL (ESQUERDA) ============ */
+    .login-visual {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 38px 48px 34px;
+      color: #eef0ff;
+      isolation: isolate;
+      transition: background .5s ease;
+    }
+    .login-visual::before {
+      content: "";
+      position: absolute; inset: 0; z-index: -2;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(101,89,219,.55), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(140,130,240,.35), transparent 50%),
+        radial-gradient(circle at 60% 50%, rgba(80,70,200,.35), transparent 60%),
+        linear-gradient(135deg, #0f1220 0%, #1a1f3d 50%, #2d2f66 100%);
+      transition: background .5s ease;
+    }
+    .login-visual::after {
+      content: "";
+      position: absolute; inset: 0; z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 85%);
+      mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 85%);
+      pointer-events: none;
+    }
+
+    .login-visual .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #fff;
+      font: 800 20px 'Manrope', sans-serif; letter-spacing: -1px;
+      align-self: flex-start; padding: 6px 4px; border-radius: 8px;
+      transition: transform .2s ease;
+    }
+    .login-visual .brand:hover { transform: translateY(-1px); }
+    .login-visual .brand img {
+      width: 32px; height: 32px; border-radius: 9px; object-fit: cover; background: transparent;
+    }
+    .login-visual .brand-light { font-weight: 500; color: #9fa6c9; }
+
+    .visual-stage {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+      margin: 8px 0;
+      perspective: 800px;
+    }
+    
+    /* HERO CARD */
+    .hero-card {
+      position: relative; z-index: 2;
+      width: 200px; height: 260px;
+      border-radius: 22px;
+      background: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 30px 60px -20px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.2);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; padding: 26px 22px; color: #fff;
+      transition: transform .15s ease-out, border-color .5s, background .5s;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: pointer;
+    }
+    .hero-card svg {
+      width: 64px; height: 64px;
+      color: rgba(255,255,255,.95);
+      filter: drop-shadow(0 4px 14px rgba(120,110,255,.45));
+      transition: color .3s ease;
+    }
+    .hero-card:hover .hero-glow { opacity: 1; }
+
+    .hero-glow {
+      position: absolute; inset: -30px;
+      border-radius: 32px;
+      background: radial-gradient(circle, rgba(140,130,240,.35), transparent 70%);
+      z-index: -1; filter: blur(24px);
+      animation: glowPulse 6s ease-in-out infinite;
+      transition: background .45s ease;
+    }
+    .hero-lines { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .hero-lines span {
+      display: block; height: 6px; border-radius: 4px; background: rgba(255,255,255,.18);
+      transition: width .35s ease;
+    }
+    .hero-lines span:nth-child(2) { width: 75%; }
+    .hero-lines span:nth-child(3) { width: 55%; }
+    @keyframes glowPulse {
+      0%, 100% { opacity: .7; transform: scale(1); }
+      50%      { opacity: 1;  transform: scale(1.08); }
+    }
+
+    /* Emojis sazonais no card */
+    .hero-card::after {
+      position: absolute; top: -30px; right: -20px; font-size: 64px;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.3)); animation: float 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    #heroIcon { transform-origin: center; }
+    #heroIcon.swap { animation: heroSwap .55s cubic-bezier(.34, 1.56, .64, 1); }
+    @keyframes heroSwap {
+      0%   { transform: scale(.65) rotate(-10deg); opacity: .35; }
+      60%  { transform: scale(1.12) rotate(4deg);  opacity: 1;   }
+      100% { transform: scale(1) rotate(0);        opacity: 1;   }
+    }
+
+    /* Ícones flutuantes do palco */
+    .float-icon {
+      position: absolute;
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer; user-select: none;
+      top: var(--y); left: var(--x);
+      right: var(--x-right); bottom: var(--y-bottom);
+      translate: 0 0;
+      animation: float var(--dur, 7s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+      transition: background .25s ease, border-color .25s ease, color .25s ease,
+                  box-shadow .25s ease, transform .25s ease;
+      font-size: 24px; line-height: 1;
+    }
+    .float-icon svg { width: 22px; height: 22px; position: relative; z-index: 1; }
+    .float-icon:hover {
+      background: rgba(101,89,219,.35);
+      border-color: rgba(180,170,255,.6);
+      color: #fff;
+      box-shadow: 0 12px 32px -6px rgba(101,89,219,.6), inset 0 0 0 1px rgba(255,255,255,.08);
+      animation-play-state: paused;
+      transform: translateY(-4px) scale(1.08);
+      z-index: 3;
+    }
+    .float-icon:active { transform: translateY(-2px) scale(1.02); }
+    .float-icon:focus-visible { outline: 2px solid rgba(180,170,255,.85); outline-offset: 3px; }
+    .float-icon.selected {
+      background: rgba(101,89,219,.28);
+      border-color: rgba(180,170,255,.55);
+      color: #fff;
+      box-shadow: 0 8px 24px -8px rgba(101,89,219,.5);
+    }
+
+    @keyframes float {
+      0%, 100% { translate: 0 0; }
+      33%      { translate: 3px -10px; }
+      66%      { translate: -3px 6px; }
+    }
+    .icon-ripple {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 2px solid rgba(180,170,255,.85);
+      animation: iconRipple .7s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes iconRipple {
+      0%   { transform: scale(1);   opacity: 1; }
+      100% { transform: scale(1.7); opacity: 0; }
+    }
+
+    .hero-card[data-mode="database"] .hero-glow { background: radial-gradient(circle, rgba(90,200,190,.42), transparent 70%); }
+    .hero-card[data-mode="cloud"]    .hero-glow { background: radial-gradient(circle, rgba(140,180,255,.42), transparent 70%); }
+    .hero-card[data-mode="code"]     .hero-glow { background: radial-gradient(circle, rgba(140,220,140,.38), transparent 70%); }
+    .hero-card[data-mode="git"]      .hero-glow { background: radial-gradient(circle, rgba(255,170,120,.42), transparent 70%); }
+    .hero-card[data-mode="search"]   .hero-glow { background: radial-gradient(circle, rgba(180,150,255,.42), transparent 70%); }
+    .hero-card[data-mode="shield"]   .hero-glow { background: radial-gradient(circle, rgba(255,220,120,.42), transparent 70%); }
+
+    .visual-copy { position: relative; z-index: 1; }
+    .visual-copy h2 {
+      font: 800 clamp(24px, 2.4vw, 34px)/1.15 'Manrope', sans-serif;
+      letter-spacing: -1px; margin: 0 0 12px; color: #fff;
+    }
+    .visual-copy p {
+      margin: 0 0 18px; max-width: 420px;
+      font-size: 13.5px; line-height: 1.55; color: rgba(224,228,255,.78);
+    }
+    .visual-features { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .visual-features li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12.5px; color: rgba(224,228,255,.82);
+    }
+    .visual-features span {
+      width: 22px; height: 22px;
+      display: grid; place-items: center;
+      border-radius: 6px; background: rgba(140,130,240,.22);
+      color: #c8c0ff; font-size: 11px;
+    }
+    .visual-meta { font-size: 10px; color: rgba(200,205,240,.5); letter-spacing: .4px; }
+
+    /* ============ PAINEL DIREITO (LOGIN) ============ */
+    .login-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px 24px;
+      background: #f5f6fa;
+      position: relative;
+      transition: background .5s ease;
+      overflow: hidden; /* Para conter os ícones ambientais */
+    }
+    .login-brand--mobile { display: none; }
+
+    /* Ícones Ambientais no fundo branco */
+    .ambient-icons {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-icon {
+      position: absolute;
+      opacity: 0.18; /* Perceptível mas discreto */
+      width: 48px;   /* Reduzido para ficar minimalista */
+      height: 48px;
+      color: currentColor;
+      animation: ambientFloat 8s ease-in-out infinite;
+    }
+    .ambient-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 1.5;
+    }
+    @keyframes ambientFloat {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    /* Ticker (Métricas) */
+    .top-ticker {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 420px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; background: #fff;
+      border: 1px solid #eef0f5; border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(24,29,55,.03);
+      margin-bottom: 16px; font-size: 11.5px; color: #596174;
+      transition: opacity .3s ease;
+    }
+    .ticker-icon { font-size: 16px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.1)); }
+    .ticker-text strong { color: #30384a; }
+
+    /* Card de Login */
+    .login-card {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 420px;
+      background: #fff; border: 1px solid #eef0f5;
+      border-radius: 16px; padding: 32px 34px 24px;
+      box-shadow: 0 30px 60px -20px rgba(24,29,55,.18);
+      animation: cardEnter .5s cubic-bezier(.2,.8,.2,1);
+      transition: background .5s ease, border-color .5s ease;
+    }
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(12px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Badge de Data */
+    .theme-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      background: #f0efff; color: #5e54ce;
+      font-size: 10px; font-weight: 700; letter-spacing: .3px;
+      margin-bottom: 12px; border: 1px solid #e4e0ff;
+      text-decoration: none; cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .theme-badge:hover { background: #e4e0ff; color: #4c42c9; }
+
+    .login-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      background: #eaf7f1; color: #25866d;
+      font-size: 10px; font-weight: 600; letter-spacing: .3px;
+      margin-bottom: 16px;
+    }
+    .status-icon { width: 12px; height: 12px; fill: currentColor; }
+
+    .login-card h1 { font: 800 24px/1.2 'Manrope', sans-serif; letter-spacing: -.7px; margin: 0 0 8px; color: #1c2334; }
+    .login-card p { margin: 0 0 24px; color: #7b8293; font-size: 12.5px; line-height: 1.55; }
+
+    .login-field { display: grid; gap: 7px; margin-bottom: 16px; }
+    .login-field label { font-size: 11px; font-weight: 600; color: #596174; letter-spacing: .2px; }
+    .field-input {
+      position: relative; display: flex; align-items: center;
+      border: 1px solid #e5e7ef; border-radius: 11px; background: #fbfbfe;
+      transition: border-color .18s, background .18s, box-shadow .18s;
+    }
+    .field-input:focus-within {
+      border-color: #b8b1ec; background: #fff;
+      box-shadow: 0 0 0 4px rgba(101,89,219,.12);
+    }
+    .field-icon { width: 18px; height: 18px; margin-left: 14px; color: #8f96a8; flex: none; transition: color .18s; }
+    .field-input:focus-within .field-icon { color: #6559db; }
+    .field-input input {
+      flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+      font: inherit; font-size: 13px; color: #1c2334; padding: 13px 12px; border-radius: inherit;
+    }
+    .field-input input::placeholder { color: #b3b8c6; }
+    .field-input input::-ms-reveal, .field-input input::-ms-clear { display: none; }
+
+    .user-eyes-closed { display: none; }
+    .field-input.password-shown .user-eyes-open { display: none; }
+    .field-input.password-shown .user-eyes-closed { display: inline; }
+
+    .field-input .icon-crown { display: none; }
+    .field-input.admin-mode .icon-user { display: none; }
+    .field-input.admin-mode .icon-crown { display: inline; }
+    .field-input.admin-mode .field-icon { color: #e5aa47; }
+
+    .password-toggle {
+      width: 36px; height: 36px; display: grid; place-items: center;
+      margin-right: 4px; color: #9aa1b0; border: 0; background: transparent;
+      border-radius: 8px; cursor: pointer; transition: color .15s, background .15s;
+    }
+    .password-toggle:hover { color: #6559db; background: #f2f0ff; }
+    .password-toggle svg { width: 18px; height: 18px; }
+    .password-toggle:focus-visible { outline: 2px solid #b8b1ec; outline-offset: 1px; }
+
+    /* Botão Submit */
+    .login-submit {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 46px; padding: 0 20px; border: 0; border-radius: 11px;
+      color: #fff; font: 700 13px 'DM Sans', sans-serif; letter-spacing: .2px;
+      background: linear-gradient(180deg, #7267df, #5c51ce);
+      box-shadow: 0 8px 20px -8px rgba(101,89,219,.55), inset 0 1px 0 rgba(255,255,255,.15);
+      cursor: pointer; transition: transform .15s, box-shadow .2s, opacity .2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .login-submit:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -8px rgba(101,89,219,.65); }
+    .login-submit:active { transform: translateY(0); }
+    .login-submit:disabled { opacity: .85; cursor: progress; }
+    .btn-arrow { transition: transform .2s; }
+    .login-submit:hover .btn-arrow { transform: translateX(3px); }
+
+    .login-error {
+      display: none; margin: 14px 0 0; padding: 11px 12px;
+      border-radius: 8px; background: #fff0f0; border: 1px solid #f4cfcf;
+      color: #a3444c; font-size: 12px; line-height: 1.5;
+    }
+    .login-error.show { display: block; }
+
+    .login-card.shake { animation: shake .4s; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .login-help { margin: 20px 0 0 !important; text-align: center; font-size: 11.5px !important; color: #7b8293; }
+
+    .login-beta-link {
+      display: flex; align-items: center; justify-content: space-between;
+      text-decoration: none; font-size: 11px; color: #6559db; font-weight: 600;
+      padding: 10px 0 0; border-top: 1px solid #edf0f5; margin-top: 14px; transition: color .15s;
+    }
+    .login-beta-link:hover { color: #4c42c9; text-decoration: underline; }
+    .beta-badge {
+      background: #f0efff; color: #5e54ce; font-size: 9px;
+      padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: .5px;
+    }
+
+    /* Bloco de Curiosidade */
+    .curiosity-box {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 420px;
+      margin-top: 16px; padding: 16px;
+      background: #fff; border: 1px solid #eef0f5;
+      border-radius: 12px; font-size: 11.5px; line-height: 1.6; color: #5d6578;
+      box-shadow: 0 4px 12px rgba(24,29,55,.02);
+      transition: opacity .3s ease;
+    }
+    .curiosity-box a {
+      color: #6559db; text-decoration: none; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;
+    }
+    .curiosity-box a:hover { text-decoration: underline; }
+
+    /* Dicas de Boas Práticas */
+    .bottom-tips {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 420px;
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: 16px; padding: 12px 16px;
+      background: #f8f9fc; border: 1px dashed #dfe2eb;
+      border-radius: 12px; font-size: 11px; line-height: 1.5; color: #5d6578;
+      transition: opacity .3s ease;
+    }
+    .bottom-tips .tip-icon { font-size: 16px; flex-shrink: 0; }
+    .bottom-tips strong { color: #30384a; }
+    .bottom-tips kbd {
+      font-family: inherit; background: #fff; border: 1px solid #dfe2eb;
+      border-radius: 4px; padding: 1px 4px; font-size: 10px; color: #596174;
+      box-shadow: 0 1px 0 #dfe2eb;
+    }
+
+    .login-version {
+      position: relative; z-index: 2;
+      margin-top: 20px; text-align: center; color: #a0a5b1;
+      font-size: 10px; letter-spacing: .3px;
+    }
+
+    /* Modal Beta */
+    .beta-modal {
+      position: fixed; inset: 0; background: rgba(20,26,40,.45);
+      backdrop-filter: blur(4px); display: flex; align-items: center;
+      justify-content: center; z-index: 100; opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .beta-modal.show { opacity: 1; pointer-events: all; }
+    .beta-modal-card {
+      background: #fff; width: min(440px, 90vw); border-radius: 16px;
+      padding: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,.2);
+      transform: translateY(10px); transition: transform .25s cubic-bezier(.2,.8,.2,1);
+    }
+    .beta-modal.show .beta-modal-card { transform: translateY(0); }
+    .beta-modal h3 { margin: 0 0 16px; font: 800 18px 'Manrope', sans-serif; color: #1c2334; display: flex; align-items: center; gap: 8px; }
+    .beta-modal ul { margin: 0 0 24px; padding: 0 0 0 16px; color: #596174; font-size: 12.5px; line-height: 1.6; }
+    .beta-modal li { margin-bottom: 8px; }
+    .beta-modal li strong { color: #30384a; }
+    .beta-modal button { width: 100%; height: 38px; border-radius: 8px; border: 0; background: #f0efff; color: #5e54ce; font-weight: 700; font-size: 12px; cursor: pointer; transition: background .15s; }
+    .beta-modal button:hover { background: #e4e0ff; }
+
+    /* ============ TEMAS E DATAS ============ */
+    /* 1. Privacidade (28/01) */
+    body.theme-privacy .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,100,255,.4), transparent 45%), linear-gradient(135deg, #000 0%, #001a33 50%, #003366 100%); }
+    body.theme-privacy .login-submit { background: linear-gradient(180deg, #2979ff, #1565c0); }
+    body.theme-privacy .hero-card::after { content: "🔒"; }
+    body.theme-privacy .login-main { color: #2979ff; }
+
+    /* 2. Internet Segura (2ª terça Fevereiro) */
+    body.theme-safernet .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,200,200,.4), transparent 45%), linear-gradient(135deg, #001a1a 0%, #003333 50%, #006666 100%); }
+    body.theme-safernet .login-submit { background: linear-gradient(180deg, #00bfa5, #00897b); }
+    body.theme-safernet .hero-card::after { content: "🛡️"; }
+    body.theme-safernet .login-main { color: #00bfa5; }
+
+    /* 3. Dia do Pi (14/03) */
+    body.theme-pi .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(255,200,0,.3), transparent 45%), linear-gradient(135deg, #1a1a00 0%, #333300 50%, #666600 100%); }
+    body.theme-pi .login-submit { background: linear-gradient(180deg, #ffd54f, #ffb300); color: #1c2334; }
+    body.theme-pi .hero-card::after { content: "🥧"; }
+    body.theme-pi .login-main { color: #ffb300; }
+
+    /* 4. Hardware Livre (20/04) */
+    body.theme-hardware .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(100,200,100,.3), transparent 45%), linear-gradient(135deg, #001a00 0%, #003300 50%, #006600 100%); }
+    body.theme-hardware .login-submit { background: linear-gradient(180deg, #66bb6a, #43a047); }
+    body.theme-hardware .hero-card::after { content: "🔧"; }
+    body.theme-hardware .login-main { color: #43a047; }
+
+    /* 5. Meninas nas TIC (25/04) */
+    body.theme-girlsict .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(255,100,200,.4), transparent 45%), linear-gradient(135deg, #1a001a 0%, #330033 50%, #660066 100%); }
+    body.theme-girlsict .login-submit { background: linear-gradient(180deg, #ec407a, #c2185b); }
+    body.theme-girlsict .hero-card::after { content: "👩‍💻"; }
+    body.theme-girlsict .login-main { color: #ec407a; }
+
+    /* 6. SysAdmin Day (Última sexta Julho) */
+    body.theme-sysadmin .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(100,100,255,.3), transparent 45%), linear-gradient(135deg, #00001a 0%, #000033 50%, #000066 100%); }
+    body.theme-sysadmin .login-submit { background: linear-gradient(180deg, #5c6bc0, #3949ab); }
+    body.theme-sysadmin .hero-card::after { content: "🖥️"; }
+    body.theme-sysadmin .login-main { color: #3949ab; }
+
+    /* 7. Dia da Informática (15/08) */
+    body.theme-informaticsbr .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,255,100,.3), transparent 45%), linear-gradient(135deg, #001a00 0%, #003300 50%, #006600 100%); }
+    body.theme-informaticsbr .login-submit { background: linear-gradient(180deg, #66bb6a, #388e3c); }
+    body.theme-informaticsbr .hero-card::after { content: "💾"; }
+    body.theme-informaticsbr .login-main { color: #388e3c; }
+
+    /* 8. Dia do Internauta (23/08) */
+    body.theme-internauta .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,150,255,.3), transparent 45%), linear-gradient(135deg, #001a33 0%, #003366 50%, #0055aa 100%); }
+    body.theme-internauta .login-submit { background: linear-gradient(180deg, #42a5f5, #1e88e5); }
+    body.theme-internauta .hero-card::after { content: "🌐"; }
+    body.theme-internauta .login-main { color: #1e88e5; }
+
+    /* 9. Liberdade de Software (28/08) */
+    body.theme-freesoftware .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(255,150,0,.3), transparent 45%), linear-gradient(135deg, #1a0d00 0%, #331a00 50%, #664400 100%); }
+    body.theme-freesoftware .login-submit { background: linear-gradient(180deg, #ffa726, #fb8c00); }
+    body.theme-freesoftware .hero-card::after { content: "🐧"; }
+    body.theme-freesoftware .login-main { color: #fb8c00; }
+
+    /* 10. Dia do Programador (13/09 ou 12/09) */
+    body.theme-programmer .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,255,0,.2), transparent 45%), linear-gradient(135deg, #000 0%, #001a00 50%, #003300 100%); }
+    body.theme-programmer .login-submit { background: linear-gradient(180deg, #4caf50, #2e7d32); }
+    body.theme-programmer .hero-card::after { content: "☕"; }
+    body.theme-programmer .login-main { color: #2e7d32; }
+
+    /* 11. Dia do Profissional de TI (19/10) */
+    body.theme-itpro .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(150,100,255,.3), transparent 45%), linear-gradient(135deg, #0d001a 0%, #1a0033 50%, #330066 100%); }
+    body.theme-itpro .login-submit { background: linear-gradient(180deg, #7e57c2, #5e35b1); }
+    body.theme-itpro .hero-card::after { content: "💼"; }
+    body.theme-itpro .login-main { color: #5e35b1; }
+
+    /* 12. Ada Lovelace Day (2ª terça Outubro) */
+    body.theme-adalovelace .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(200,100,255,.4), transparent 45%), linear-gradient(135deg, #1a001a 0%, #330033 50%, #660066 100%); }
+    body.theme-adalovelace .login-submit { background: linear-gradient(180deg, #ab47bc, #8e24aa); }
+    body.theme-adalovelace .hero-card::after { content: "👩‍🔬"; }
+    body.theme-adalovelace .login-main { color: #8e24aa; }
+
+    /* 13. Segurança da Informação (30/11) */
+    body.theme-security .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(255,50,50,.3), transparent 45%), linear-gradient(135deg, #1a0000 0%, #330000 50%, #660000 100%); }
+    body.theme-security .login-submit { background: linear-gradient(180deg, #ef5350, #c62828); }
+    body.theme-security .hero-card::after { content: "🔐"; }
+    body.theme-security .login-main { color: #c62828; }
+
+    /* 14. Dia Mundial da Informática (09/12) */
+    body.theme-informatics .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(0,200,255,.3), transparent 45%), linear-gradient(135deg, #001a1a 0%, #003333 50%, #006666 100%); }
+    body.theme-informatics .login-submit { background: linear-gradient(180deg, #26c6da, #00acc1); }
+    body.theme-informatics .hero-card::after { content: "💻"; }
+    body.theme-informatics .login-main { color: #00acc1; }
+
+    /* 15. Natal (Dezembro) */
+    body.theme-xmas .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(220,50,50,.5), transparent 45%), radial-gradient(circle at 85% 80%, rgba(50,180,90,.4), transparent 50%), linear-gradient(135deg, #1a0000 0%, #3b0a0a 50%, #0b2e13 100%); }
+    body.theme-xmas .login-submit { background: linear-gradient(180deg, #e53935, #c62828); box-shadow: 0 8px 20px -8px rgba(198,40,40,.55); }
+    body.theme-xmas .hero-card::after { content: "🎅"; }
+    body.theme-xmas .login-main { color: #c62828; }
+
+    /* 16. Halloween (31/10) */
+    body.theme-halloween .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(255,120,0,.4), transparent 45%), radial-gradient(circle at 85% 80%, rgba(120,0,255,.3), transparent 50%), linear-gradient(135deg, #0a0a0a 0%, #1a1200 50%, #2e0b2e 100%); }
+    body.theme-halloween .login-submit { background: linear-gradient(180deg, #ff9800, #e65100); box-shadow: 0 8px 20px -8px rgba(230,81,0,.55); }
+    body.theme-halloween .hero-card::after { content: "🎃"; }
+    body.theme-halloween .login-main { color: #e65100; }
+
+    /* 17. April Fools (01/04) */
+    body.theme-fools .login-card { transform: rotate(2deg); }
+    body.theme-fools .login-submit { background: linear-gradient(180deg, #ffeb3b, #fbc02d); color: #1c2334; box-shadow: 0 8px 20px -8px rgba(251,192,45,.55); }
+    body.theme-fools .hero-card { transform: rotate(180deg) !important; }
+    body.theme-fools .hero-card::after { content: "🤡"; }
+    body.theme-fools .login-main { color: #fbc02d; }
+
+    /* 18. Modo Debug (Easter Egg) */
+    body.theme-debug .login-visual::before { background: radial-gradient(circle at 15% 20%, rgba(76,175,80,.4), transparent 45%), radial-gradient(circle at 85% 80%, rgba(56,142,60,.3), transparent 50%), linear-gradient(135deg, #000000 0%, #0a1f0a 50%, #133813 100%); }
+    body.theme-debug .login-submit { background: linear-gradient(180deg, #4caf50, #388e3c); }
+    body.theme-debug .hero-card::after { content: "🦆"; }
+    body.theme-debug .login-main { color: #388e3c; }
+
+
+    /* ============ RESPONSIVO ============ */
+    @media (max-width: 960px) {
+      .login-shell { grid-template-columns: 1fr; }
+      .login-visual { display: none; }
+      .login-main { padding: 64px 20px 20px; }
+      .login-brand--mobile {
+        display: inline-flex; align-items: center; gap: 8px;
+        position: absolute; top: 24px; left: 24px;
+        text-decoration: none; color: #1c2334;
+        font: 800 18px 'Manrope', sans-serif; letter-spacing: -1px; z-index: 10;
+      }
+      .login-brand--mobile img { width: 28px; height: 28px; border-radius: 8px; }
+      .login-brand--mobile .brand-light { font-weight: 500; color: #8e95a6; }
+    }
+    @media (max-width: 480px) {
+      .login-card { padding: 28px 22px 22px; border-radius: 14px; }
+      .login-card h1 { font-size: 21px; }
+      .login-brand--mobile { font-size: 16px; top: 20px; left: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .float-icon, .hero-glow, .hero-card, .login-card { animation: none !important; transition: none !important; }
+      .login-submit, .float-icon, .login-submit span { transition: none; }
+      #heroIcon.swap { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-shell">
+
+  <!-- ============ PAINEL VISUAL (ESQUERDA) ============ -->
+  <aside class="login-visual" aria-hidden="true">
+    <a href="./login.html" class="brand">
+      <img src="./atlas-tech.svg" alt="">
+      <span>atlas<span class="brand-light">.ti</span></span>
+    </a>
+
+    <div class="visual-stage">
+      <div class="hero-card" id="heroCard" title="Clique para voltar ao documento padrão">
+        <div class="hero-glow"></div>
+        <svg id="heroIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="8" y1="13" x2="16" y2="13"/>
+          <line x1="8" y1="17" x2="13" y2="17"/>
+        </svg>
+        <div class="hero-lines"><span></span><span></span><span></span></div>
+      </div>
+
+      <span class="float-icon" data-mode="database" style="--x:8%;--y:14%;--dur:7s;--delay:-1s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      </span>
+
+      <span class="float-icon" data-mode="cloud" style="--x-right:10%;--y:10%;--dur:8s;--delay:-2s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      </span>
+
+      <span class="float-icon" data-mode="code" style="--x:5%;--y:50%;--dur:6s;--delay:-.5s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </span>
+
+      <span class="float-icon" data-mode="git" style="--x-right:5%;--y:55%;--dur:9s;--delay:-3s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+      </span>
+
+      <span class="float-icon" data-mode="search" style="--x:14%;--y-bottom:16%;--dur:7.5s;--delay:-1.5s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+
+      <span class="float-icon" data-mode="shield" style="--x-right:8%;--y-bottom:12%;--dur:8.5s;--delay:-2.5s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </span>
+    </div>
+
+    <div class="visual-copy">
+      <h2>Conhecimento que<br>move sua equipe.</h2>
+      <p>Documentação, procedimentos e políticas de TI centralizados em uma biblioteca viva.</p>
+      <ul class="visual-features">
+        <li><span>✦</span> Busca inteligente em todos os documentos</li>
+        <li><span>✦</span> Versionamento e revisões controladas</li>
+        <li><span>✦</span> Acesso por módulo e permissões granulares</li>
+      </ul>
+    </div>
+
+    <div class="visual-meta">© 2026 Atlas TI</div>
+  </aside>
+
+  <!-- ============ PAINEL DIREITO (LOGIN) ============ -->
+  <main class="login-main">
+    <!-- Ícones Ambientais no fundo -->
+    <div class="ambient-icons" id="ambientIcons"></div>
+
+    <a href="./login.html" class="login-brand--mobile">
+      <img src="./atlas-tech.svg" alt="">
+      <span>atlas<span class="brand-light">.ti</span></span>
+    </a>
+
+    <!-- Métricas Rotativas -->
+    <div class="top-ticker" id="metricsWidget">
+      <span class="ticker-icon" id="tickerIcon">📄</span>
+      <span class="ticker-text" id="tickerText"><strong>+10</strong> novos documentos esta semana</span>
+    </div>
+
+    <section class="login-card">
+      <!-- Badge de Data (Link para Wikipedia) -->
+      <a href="#" target="_blank" rel="noopener" class="theme-badge" id="themeBadge" style="display: none;"></a>
+
+      <div class="login-status" role="status">
+        <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Documentação segura e atualizada
+      </div>
+
+      <h1>Acesse sua documentação de TI</h1>
+      <p>Entre com sua conta corporativa. A autenticação é validada pelo diretório Active Directory via LDAPS.</p>
+
+      <form id="loginForm">
+        <div class="login-field">
+          <label for="username">Usuário corporativo</label>
+          <div class="field-input">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <g class="icon-user">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+                <g class="user-eyes-open">
+                  <circle cx="10.4" cy="6.5" r="0.7" fill="currentColor" stroke="none"/>
+                  <circle cx="13.6" cy="6.5" r="0.7" fill="currentColor" stroke="none"/>
+                </g>
+                <g class="user-eyes-closed">
+                  <path d="M9.7 6.4c.4.5.9.5 1.4 0" stroke-width="1.2"/>
+                  <path d="M12.9 6.4c.4.5.9.5 1.4 0" stroke-width="1.2"/>
+                </g>
+              </g>
+              <g class="icon-crown">
+                <path d="M2 20h20v-2H2v2zm2-4h16l-3-9-5 5-5-5-3 9z" fill="currentColor" stroke="none"/>
+              </g>
+            </svg>
+            <input id="username" name="username" autocomplete="username" autofocus required placeholder="seu.usuario">
+          </div>
+        </div>
+
+        <div class="login-field" style="margin-bottom: 8px;">
+          <label for="password">Senha</label>
+          <div class="field-input">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path class="eye-open" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle class="eye-open" cx="12" cy="12" r="3"/>
+                <g class="eye-off" style="display:none">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </g>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="login-submit" type="submit">
+          <span class="btn-label">Entrar com segurança</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <div id="loginError" class="login-error" role="alert"></div>
+
+      <p class="login-help">Problemas para entrar? Procure o administrador de TI.</p>
+
+      <a href="#" class="login-beta-link" id="betaBtn">
+        <span>O que há de novo nesta versão</span>
+        <span class="beta-badge">BETA</span>
+      </a>
+    </section>
+
+    <!-- Bloco de Curiosidade (Oculto por padrão) -->
+    <div class="curiosity-box" id="curiosityBox" style="display: none;">
+      <div id="curiosityText"></div>
+      <a href="#" id="curiosityLink" target="_blank" rel="noopener">Ler na Wikipedia ↗</a>
+    </div>
+
+    <!-- Dicas de Boas Práticas -->
+    <div class="bottom-tips" id="tipsWidget">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text" id="tipText">
+        <strong>Dica:</strong> Mantenha as políticas de TI sempre atualizadas. Use <kbd>Ctrl</kbd> + <kbd>K</kbd> para buscar.
+      </span>
+    </div>
+
+    <div class="login-version">Atlas TI · Acesso protegido por LDAPS</div>
+  </main>
+
+</div>
+
+<!-- ============ MODAL BETA ============ -->
+<div class="beta-modal" id="betaModal">
+  <div class="beta-modal-card">
+    <h3>🚀 O que há de novo (Beta)</h3>
+    <ul>
+      <li><strong>Nova busca inteligente:</strong> encontre trechos exatos dentro dos documentos.</li>
+      <li><strong>Métricas da equipe:</strong> acompanhe quantos documentos foram criados ou revisados.</li>
+      <li><strong>Modo escuro nativo:</strong> em breve para toda a plataforma.</li>
+      <li><strong>Correções de estabilidade:</strong> melhorias no carregamento de arquivos grandes.</li>
+    </ul>
+    <button id="closeBetaBtn">Entendido</button>
+  </div>
+</div>
+
+<!-- ============ AUTENTICAÇÃO ============ -->
+<script src="auth.js"></script>
+<script>
+  const form = document.querySelector('#loginForm'),
+        error = document.querySelector('#loginError'),
+        button = form.querySelector('button'),
+        btnLabel = button.querySelector('.btn-label');
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    error.classList.remove('show');
+    button.disabled = true;
+    btnLabel.textContent = 'Validando credenciais…';
+
+    const username = form.username.value.trim(),
+          password = form.password.value;
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!response.ok) {
+        let message = response.status === 401
+          ? 'Usuário ou senha inválidos.'
+          : `Não foi possível entrar (${response.status}).`;
+        try {
+          const body = await response.json();
+          message = body.detail || body.title || message;
+        } catch {}
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+      sessionStorage.setItem('atlas-ti-admin-token', data.accessToken);
+
+      const meResponse = await fetch('/api/me', {
+        headers: { Authorization: `Bearer ${data.accessToken}` }
+      });
+      if (!meResponse.ok) {
+        throw new Error('A sessão foi criada, mas não foi possível carregar seu perfil.');
+      }
+
+      sessionStorage.setItem('atlas-ti-current-user', JSON.stringify(await meResponse.json()));
+      location.replace('./index.html');
+    } catch (err) {
+      error.textContent = err instanceof TypeError
+        ? 'Não foi possível conectar ao Atlas TI. Verifique se o serviço está disponível.'
+        : err.message;
+      error.classList.add('show');
+      button.disabled = false;
+      btnLabel.textContent = 'Entrar com segurança';
+    }
+  });
+</script>
+
+<!-- ============ VISUAL, TEMAS E EASTER EGGS ============ -->
+<script>
+(function () {
+
+  /* --- 1. Biblioteca de SVGs --- */
+  var iconLibrary = {
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    database: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+    code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+    cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>',
+    terminal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
+    bug: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M8 12H4m16 0h-4M8 10H4m16 0h-4M8 16H4m16 0h-4"/><path d="M12 6V3a1 1 0 0 1 1-1h1"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+    server: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>',
+    coffee: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+    pie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>',
+    brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+    smile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    duck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm-2 4a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm8 6v-2a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5 5 5 0 0 0-5 5v2H4a2 2 0 0 0-2 2v2h5.07A5.01 5.01 0 0 0 12 18a5.01 5.01 0 0 0 4.93-4H22v-2a2 2 0 0 0-2-2h-2z"/></svg>',
+    gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>',
+    ghost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>',
+    pumpkin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2v2a7 7 0 0 1 5.66 5.1c.43 1.72.85 3.4 1.17 4.9a2 2 0 0 1-2.51 2.35l-3.72-.92A8.96 8.96 0 0 1 12 18a8.96 8.96 0 0 1-2.6-.57l-3.72.92A2 2 0 0 1 3.17 16c.32-1.5.74-3.18 1.17-4.9A7 7 0 0 1 10 6V4a2 2 0 0 1 2-2z"/></svg>'
+  };
+
+  /* --- 2. Configuração dos Temas e Datas --- */
+  var themeBadge = document.getElementById('themeBadge');
+  var curiosityBox = document.getElementById('curiosityBox');
+  var curiosityText = document.getElementById('curiosityText');
+  var curiosityLink = document.getElementById('curiosityLink');
+  var ambientIcons = document.getElementById('ambientIcons');
+
+  var holidays = {
+    'privacy': {
+      name: 'Dia da Proteção de Dados',
+      icon: '🔒',
+      ambientIcons: ['lock', 'shield', 'globe'],
+      color: '#2979ff',
+      curiosity: 'Celebrado desde 2007, o dia marca a assinatura da Convenção 108 do Conselho da Europa, o primeiro tratado internacional sobre proteção de dados.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_Internacional_da_Proteção_de_Dados'
+    },
+    'safernet': {
+      name: 'Dia da Internet Segura',
+      icon: '🛡️',
+      ambientIcons: ['shield', 'smile', 'globe'],
+      color: '#00bfa5',
+      curiosity: 'Criado em 2004 pela União Europeia, o dia promove o uso consciente e seguro da internet, especialmente entre crianças e jovens.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_da_Internet_Segura'
+    },
+    'pi': {
+      name: 'Dia do Pi (π)',
+      icon: '🥧',
+      ambientIcons: ['pie', 'brain', 'gear'],
+      color: '#ffb300',
+      curiosity: 'Criado em 1988 pelo físico Larry Shaw, o 14/03 (3/14) também coincide com o nascimento de Albert Einstein e a morte de Stephen Hawking.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_do_Pi'
+    },
+    'hardware': {
+      name: 'Dia do Hardware Livre',
+      icon: '🔧',
+      ambientIcons: ['gear', 'server', 'bug'],
+      color: '#43a047',
+      curiosity: 'Celebra o movimento Open Hardware. A primeira edição foi em 20 de abril de 2013, incentivando o compartilhamento de projetos físicos.',
+      wiki: 'https://pt.wikipedia.org/wiki/Hardware_Freedom_Day'
+    },
+    'girlsict': {
+      name: 'Dia das Meninas nas TIC',
+      icon: '👩‍💻',
+      ambientIcons: ['brain', 'smile', 'code'],
+      color: '#ec407a',
+      curiosity: 'Criado pela UIT em 2011, o dia incentiva meninas e mulheres a seguir carreiras em Tecnologia da Informação e Comunicação.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_Internacional_das_Meninas_nas_TIC'
+    },
+    'sysadmin': {
+      name: 'Dia do Administrador de Sistemas',
+      icon: '🖥️',
+      ambientIcons: ['server', 'database', 'terminal'],
+      color: '#3949ab',
+      curiosity: 'Criado por Ted Kekatos em 2000, é celebrado na última sexta-feira de julho para homenagear os administradores de sistemas.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_do_Administrador_de_Sistemas'
+    },
+    'informaticsbr': {
+      name: 'Dia da Informática (Brasil)',
+      icon: '💾',
+      ambientIcons: ['database', 'code', 'gear'],
+      color: '#388e3c',
+      curiosity: 'Celebrado em 15 de agosto em homenagem ao ENIAC, apresentado em 1946, considerado o primeiro computador eletrônico de grande escala.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_da_Informática'
+    },
+    'internauta': {
+      name: 'Dia do Internauta',
+      icon: '🌐',
+      ambientIcons: ['globe', 'cloud', 'terminal'],
+      color: '#1e88e5',
+      curiosity: 'Marca a data em que a World Wide Web foi aberta ao público, em 23 de agosto de 1991, permitindo o acesso global à internet.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_do_Internauta'
+    },
+    'freesoftware': {
+      name: 'Dia da Liberdade de Software',
+      icon: '🐧',
+      ambientIcons: ['terminal', 'code', 'server'],
+      color: '#fb8c00',
+      curiosity: 'Criado em 2004, o Software Freedom Day celebra o software livre e de código aberto, promovendo a liberdade de uso e compartilhamento.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_da_Liberdade_de_Software'
+    },
+    'programmer': {
+      name: 'Dia do Programador',
+      icon: '☕',
+      ambientIcons: ['terminal', 'coffee', 'bug'],
+      color: '#2e7d32',
+      curiosity: 'Comemorado no 256º dia do ano (13/09 ou 12/09 em anos bissextos), pois 256 é 2^8, um número icônico na computação.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_do_Programador'
+    },
+    'itpro': {
+      name: 'Dia do Profissional de TI',
+      icon: '💼',
+      ambientIcons: ['server', 'gear', 'shield'],
+      color: '#5e35b1',
+      curiosity: 'Celebrado em 19 de outubro no Brasil, homenageia os profissionais de Tecnologia da Informação, embora a data não seja oficial por lei.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_do_Profissional_de_Informática'
+    },
+    'adalovelace': {
+      name: 'Ada Lovelace Day',
+      icon: '👩‍🔬',
+      ambientIcons: ['brain', 'code', 'gear'],
+      color: '#8e24aa',
+      curiosity: 'Celebra Ada Lovelace, considerada a primeira programadora da história, e homenageia mulheres nas áreas de STEM.',
+      wiki: 'https://pt.wikipedia.org/wiki/Ada_Lovelace_Day'
+    },
+    'security': {
+      name: 'Dia da Segurança da Informação',
+      icon: '🔐',
+      ambientIcons: ['shield', 'lock', 'bug'],
+      color: '#c62828',
+      curiosity: 'Criado após o ataque do Morris Worm em 1988, o dia conscientiza sobre a importância da segurança digital.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_Internacional_da_Segurança_da_Informação'
+    },
+    'informatics': {
+      name: 'Dia Mundial da Informática',
+      icon: '💻',
+      ambientIcons: ['server', 'globe', 'terminal'],
+      color: '#00acc1',
+      curiosity: 'Homenageia Grace Hopper, pioneira da computação e criadora do primeiro compilador, nascida em 9 de dezembro de 1906.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_Mundial_da_Informática'
+    },
+    'xmas': {
+      name: 'Natal',
+      icon: '🎅',
+      ambientIcons: ['gift', 'moon', 'smile'],
+      color: '#c62828',
+      curiosity: 'O Natal é celebrado em 25 de dezembro para comemorar o nascimento de Jesus Cristo. Na TI, é tradição trocar cartões digitais e fazer o famoso "amigo secreto" virtual.',
+      wiki: 'https://pt.wikipedia.org/wiki/Natal'
+    },
+    'halloween': {
+      name: 'Dia das Bruxas',
+      icon: '🎃',
+      ambientIcons: ['pumpkin', 'ghost', 'moon'],
+      color: '#e65100',
+      curiosity: 'O Halloween tem origem no festival celta de Samhain. Na computação, o termo "ghost in the machine" (fantasma na máquina) é usado para bugs misteriosos.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_das_Bruxas'
+    },
+    'fools': {
+      name: 'Dia da Mentira',
+      icon: '🤡',
+      ambientIcons: ['smile', 'ghost', 'bug'],
+      color: '#fbc02d',
+      curiosity: 'O Dia da Mentira (April Fools) é conhecido pelas pegadinhas. Grandes empresas de tecnologia costumam lançar produtos falsos e engraçados nesta data.',
+      wiki: 'https://pt.wikipedia.org/wiki/Dia_da_Mentira'
+    },
+    'debug': {
+      name: 'Modo Desenvolvedor',
+      icon: '🦆',
+      ambientIcons: ['duck', 'bug', 'coffee'],
+      color: '#388e3c',
+      curiosity: 'O "Rubber Duck Debugging" é uma técnica onde você explica o código para um patinho de borracha, o que ajuda a encontrar erros de lógica.',
+      wiki: 'https://pt.wikipedia.org/wiki/Rubber_duck_debugging'
+    }
+  };
+
+  function applyTheme(themeId) {
+    document.body.className = '';
+    ambientIcons.innerHTML = '';
+
+    if (!themeId || !holidays[themeId]) {
+      if (themeBadge) themeBadge.style.display = 'none';
+      if (curiosityBox) curiosityBox.style.display = 'none';
+      return;
+    }
+
+    var data = holidays[themeId];
+    document.body.classList.add('theme-' + themeId);
+    document.body.style.color = data.color; 
+
+    if (themeBadge) {
+      themeBadge.innerHTML = '📅 ' + data.name;
+      themeBadge.href = data.wiki;
+      themeBadge.style.display = 'inline-flex';
+    }
+
+    if (curiosityBox) {
+      curiosityText.innerHTML = '<strong>Você sabia?</strong> ' + data.curiosity;
+      curiosityLink.href = data.wiki;
+      curiosityBox.style.display = 'block';
+    }
+
+    if (ambientIcons) {
+      // Posições espalhadas para criar profundidade sem atrapalhar
+      var positions = [
+        { top: '10%', left: '5%' },
+        { top: '25%', left: '12%' },
+        { top: '45%', left: '6%' },
+        { top: '65%', left: '15%' },
+        { top: '85%', left: '8%' },
+        { top: '8%', right: '10%' },
+        { top: '22%', right: '18%' },
+        { top: '50%', right: '6%' },
+        { top: '70%', right: '15%' },
+        { top: '88%', right: '8%' },
+        { top: '15%', left: '35%' },
+        { top: '85%', right: '30%' }
+      ];
+      
+      // Gera 12 ícones intercalando o pool de 3 ícones do tema
+      for (var i = 0; i < 12; i++) {
+        var iconName = data.ambientIcons[i % data.ambientIcons.length];
+        var span = document.createElement('span');
+        span.className = 'ambient-icon';
+        span.innerHTML = iconLibrary[iconName] || ''; 
+        span.style.color = data.color; 
+
+        var pos = positions[i];
+        if (pos.top) span.style.top = pos.top;
+        if (pos.left) span.style.left = pos.left;
+        if (pos.right) span.style.right = pos.right;
+        
+        span.style.animationDelay = (i * 0.6) + 's'; // Animação dessincronizada
+        
+        ambientIcons.appendChild(span);
+      }
+    }
+  }
+
+  /* --- 3. Cálculo de Datas (Fixo e Móvel) --- */
+  function getNthWeekday(year, month, weekday, n) {
+    var count = 0;
+    for (var day = 1; day <= 31; day++) {
+      var d = new Date(year, month, day);
+      if (d.getMonth() !== month) break;
+      if (d.getDay() === weekday) {
+        count++;
+        if (count === n) return day;
+      }
+    }
+    return -1;
+  }
+
+  function getLastWeekday(year, month, weekday) {
+    for (var day = 31; day >= 1; day--) {
+      var d = new Date(year, month, day);
+      if (d.getMonth() === month && d.getDay() === weekday) return day;
+    }
+    return -1;
+  }
+
+  function detectTodayTheme() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth(); // 0-11
+    var day = now.getDate();
+
+    if (month === 11) return 'xmas';
+    if (month === 9 && day === 31) return 'halloween';
+    if (month === 3 && day === 1) return 'fools';
+    
+    if (month === 0 && day === 28) return 'privacy';
+    if (month === 2 && day === 14) return 'pi';
+    if (month === 3 && day === 20) return 'hardware';
+    if (month === 3 && day === 25) return 'girlsict';
+    if (month === 7 && day === 15) return 'informaticsbr';
+    if (month === 7 && day === 23) return 'internauta';
+    if (month === 7 && day === 28) return 'freesoftware';
+    
+    if (month === 8) {
+      var isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+      if (day === (isLeap ? 12 : 13)) return 'programmer';
+    }
+
+    if (month === 9 && day === 19) return 'itpro';
+    if (month === 10 && day === 30) return 'security';
+    if (month === 11 && day === 9) return 'informatics';
+
+    if (month === 1 && day === getNthWeekday(year, 1, 2, 2)) return 'safernet';
+    if (month === 6 && day === getLastWeekday(year, 6, 5)) return 'sysadmin';
+    if (month === 9 && day === getNthWeekday(year, 9, 2, 2)) return 'adalovelace';
+
+    return null;
+  }
+
+  applyTheme(detectTodayTheme());
+
+  /* --- 4. Easter Eggs (Digitar na Senha) --- */
+  var passwordInput = document.getElementById('password');
+  var passwordToggle = document.getElementById('passwordToggle');
+  var usernameInput = document.getElementById('username');
+  var userFieldInput = usernameInput ? usernameInput.closest('.field-input') : null;
+
+  if (passwordInput) {
+    passwordInput.addEventListener('input', function(e) {
+      var val = e.target.value.toLowerCase().trim();
+      
+      if (val === 'atlas') {
+        applyTheme('debug');
+        var emojis = ['👾', '🐛', '☕', '🦆', '💾', '🚀'];
+        document.querySelectorAll('.float-icon').forEach(function(icon, i) {
+          icon.innerHTML = '<span style="font-size:24px;">' + emojis[i % emojis.length] + '</span>';
+        });
+        var heroIcon = document.getElementById('heroIcon');
+        if (heroIcon) {
+          heroIcon.innerHTML = '<path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm-2 4a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm8 6v-2a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5 5 5 0 0 0-5 5v2H4a2 2 0 0 0-2 2v2h5.07A5.01 5.01 0 0 0 12 18a5.01 5.01 0 0 0 4.93-4H22v-2a2 2 0 0 0-2-2h-2z"/>';
+        }
+      } else if (holidays[val]) {
+        applyTheme(val);
+      } else {
+        applyTheme(detectTodayTheme());
+        
+        document.querySelectorAll('.float-icon').forEach(function(icon) {
+           if (icon.innerHTML.includes('<span')) {
+              var hc = document.getElementById('heroCard');
+              if (hc) hc.click();
+           }
+        });
+      }
+    });
+  }
+
+  /* --- 5. Interações do Palco (Esquerda) --- */
+  if (passwordToggle) {
+    var eyeOpen = passwordToggle.querySelectorAll('.eye-open');
+    var eyeOff = passwordToggle.querySelectorAll('.eye-off');
+    passwordToggle.addEventListener('click', function () {
+      var show = passwordInput.type === 'password';
+      passwordInput.type = show ? 'text' : 'password';
+      eyeOpen.forEach(function (el) { el.style.display = show ? 'none' : ''; });
+      eyeOff.forEach(function (el) { el.style.display = show ? '' : 'none'; });
+      passwordToggle.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+      if (userFieldInput) userFieldInput.classList.toggle('password-shown', show);
+      passwordInput.focus();
+    });
+  }
+
+  if (usernameInput && userFieldInput) {
+    usernameInput.addEventListener('input', function (e) {
+      var val = e.target.value.toLowerCase();
+      var isAdmin = /admin|root|administrador/.test(val);
+      userFieldInput.classList.toggle('admin-mode', isAdmin);
+    });
+  }
+
+  document.querySelectorAll('.float-icon').forEach(function (icon) {
+    icon.addEventListener('click', function () {
+      var dot = document.createElement('span');
+      dot.className = 'icon-ripple';
+      icon.appendChild(dot);
+      setTimeout(function () { dot.remove(); }, 700);
+    });
+  });
+
+  var heroCard  = document.getElementById('heroCard');
+  var heroIcon  = document.getElementById('heroIcon');
+  var floatIcons = document.querySelectorAll('.float-icon');
+
+  if (heroCard && heroIcon) {
+    var defaultInner = heroIcon.innerHTML;
+    var defaultViewBox = heroIcon.getAttribute('viewBox');
+
+    floatIcons.forEach(function (icon) {
+      icon.addEventListener('click', function () {
+        if (icon.classList.contains('selected')) { resetHero(); return; }
+        var sourceSvg = icon.querySelector('svg');
+        if (!sourceSvg) return;
+
+        floatIcons.forEach(function (i) { i.classList.remove('selected'); });
+        icon.classList.add('selected');
+
+        heroIcon.innerHTML = sourceSvg.innerHTML;
+        heroIcon.setAttribute('viewBox', sourceSvg.getAttribute('viewBox') || '0 0 24 24');
+        heroCard.setAttribute('data-mode', icon.dataset.mode || '');
+        pulseHeroIcon();
+      });
+    });
+
+    heroCard.addEventListener('click', function () { resetHero(); });
+
+    function resetHero() {
+      var hadSelection = heroCard.hasAttribute('data-mode');
+      floatIcons.forEach(function (i) { i.classList.remove('selected'); });
+      heroIcon.innerHTML = defaultInner;
+      heroIcon.setAttribute('viewBox', defaultViewBox);
+      heroCard.removeAttribute('data-mode');
+      if (hadSelection) pulseHeroIcon();
+    }
+    function pulseHeroIcon() {
+      heroIcon.classList.remove('swap');
+      void heroIcon.offsetWidth;
+      heroIcon.classList.add('swap');
+    }
+  }
+
+  (function () {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    var stage = document.querySelector('.visual-stage');
+    if (!stage || !heroCard) return;
+    stage.addEventListener('mousemove', function (e) {
+      var r = stage.getBoundingClientRect();
+      var x = (e.clientX - r.left - r.width  / 2) / r.width;
+      var y = (e.clientY - r.top  - r.height / 2) / r.height;
+      heroCard.style.transform = 'translate(' + (x * 12) + 'px,' + (y * 12) + 'px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 8) + 'deg)';
+    });
+    stage.addEventListener('mouseleave', function () { heroCard.style.transform = ''; });
+  })();
+
+  /* --- 6. Métricas e Dicas Rotativas --- */
+  (function () {
+    var metrics = [
+      { icon: '📄', text: '<strong>+10</strong> novos documentos esta semana' },
+      { icon: '🖥️', text: '<strong>20</strong> documentos de sistemas catalogados' },
+      { icon: '⚡', text: '<strong>+5</strong> novos planos de ação adicionados' },
+      { icon: '⏳', text: '<strong>7</strong> documentos pendentes de revisão' }
+    ];
+    var widget = document.getElementById('metricsWidget');
+    var iconEl = document.getElementById('tickerIcon');
+    var textEl = document.getElementById('tickerText');
+    if (!widget) return;
+    
+    var i = 0;
+    setInterval(function () {
+      i = (i + 1) % metrics.length;
+      widget.style.opacity = 0;
+      setTimeout(function () {
+        iconEl.textContent = metrics[i].icon;
+        textEl.innerHTML = metrics[i].text;
+        widget.style.opacity = 1;
+      }, 300);
+    }, 5000);
+  })();
+
+  (function () {
+    var tips = [
+      '<strong>Dica:</strong> Você pode usar <kbd>Ctrl</kbd> + <kbd>K</kbd> para buscar documentos.',
+      '<strong>Boas práticas:</strong> Mantenha as políticas de TI sempre atualizadas.',
+      '<strong>Organização:</strong> Documentos em revisão aparecem com um ícone de relógio.',
+      '<strong>Produtividade:</strong> Use filtros por sistema para encontrar POPs mais rápido.',
+      '<strong>Segurança:</strong> Nunca compartilhe credenciais de acesso administrativo.'
+    ];
+    var widget = document.getElementById('tipsWidget');
+    var textEl = document.getElementById('tipText');
+    if (!widget) return;
+    
+    var i = 0;
+    setInterval(function () {
+      i = (i + 1) % tips.length;
+      widget.style.opacity = 0;
+      setTimeout(function () {
+        textEl.innerHTML = tips[i];
+        widget.style.opacity = 1;
+      }, 300);
+    }, 8000);
+  })();
+
+  /* --- 7. Modal Beta --- */
+  (function () {
+    var btn = document.getElementById('betaBtn');
+    var modal = document.getElementById('betaModal');
+    var close = document.getElementById('closeBetaBtn');
+    if (!btn || !modal || !close) return;
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      modal.classList.add('show');
+    });
+    close.addEventListener('click', function () { modal.classList.remove('show'); });
+    modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('show'); });
+  })();
+
+})();
+</script>
+
+</body>
+</html>

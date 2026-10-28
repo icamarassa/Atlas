@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>atlas-ti-api-local-development</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="10.0.13" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\database.sql" Link="database.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\index.html" Link="wwwroot\index.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\styles.css" Link="wwwroot\styles.css" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\app.js" Link="wwwroot\app.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\admin-settings.html" Link="wwwroot\admin-settings.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\guide.html" Link="wwwroot\guide.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\notifications.html" Link="wwwroot\notifications.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\alert-settings.html" Link="wwwroot\alert-settings.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\atlas-tech.svg" Link="wwwroot\atlas-tech.svg" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

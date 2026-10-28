@@ -1,0 +1,25 @@
+diff --git a/api/Program.cs b/api/Program.cs
+index 442764f..9f33cd4 100644
+--- a/api/Program.cs
++++ b/api/Program.cs
+@@ -166,6 +166,11 @@ api.MapPost("/auth/login", async (LoginRequest request, LdapAuthenticator ldap,
+             directoryMail = profile.Attributes.GetValueOrDefault("mail");
+         }
+     }
++    // Quem já existe no Atlas TI com outra forma de login (UPN, DOM\ana ou o texto digitado) continua sendo o mesmo usuário:
++    // usa-se o registro mais antigo, sem renomear nem duplicar autoria, papéis e e-mail.
++    var knownKeys = new[] { canonicalSubject, subject, typedLogin }.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
++    var existingKey = (await QueryAsync(db, $"SELECT ExternalId FROM Users WHERE ExternalId IN ({string.Join(',', knownKeys.Select((_, index) => $"@k{index}"))}) ORDER BY UserId LIMIT 1", knownKeys.Select((key, index) => P($"@k{index}", key)).ToArray(), r => r.GetString(0), ct)).FirstOrDefault();
++    if (existingKey is not null) canonicalSubject = existingKey;
+     var claims = new List<Claim> { new("sub", canonicalSubject), new("name", displayName), new("preferred_username", typedLogin) };
+     if (!string.IsNullOrWhiteSpace(directoryMail)) claims.Add(new Claim("email", directoryMail.Trim()));
+     var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "ldaps"));
+@@ -229,7 +234,7 @@ api.MapGet("/me/profile", async (ClaimsPrincipal user, LdapAuthenticator ldap, I
+     if (!string.IsNullOrWhiteSpace(displayName))
+     {
+         await using var connection = await db.OpenAsync(ct);
+-        await using var sync = new MySqlCommand("UPDATE Users SET DisplayName=@name,Email=IF(@email IS NULL OR @email='',Email,@email) WHERE ExternalId=@externalId", connection);
++        await using var sync = new MySqlCommand("UPDATE Users SET DisplayName=@name,Email=IF(@email IS NULL OR @email='' OR EXISTS(SELECT 1 FROM (SELECT UserId FROM Users WHERE Email=@email AND ExternalId<>@externalId) other),Email,@email) WHERE ExternalId=@externalId", connection);
+         sync.Parameters.AddRange(new MySqlParameter[] { P("@name", displayName), P("@email", result.Attributes.GetValueOrDefault("mail")), P("@externalId", user.FindFirstValue("sub")) });
+         await sync.ExecuteNonQueryAsync(ct);
+     }

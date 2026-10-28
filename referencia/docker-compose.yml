@@ -1,0 +1,72 @@
+services:
+  mariadb:
+    image: mariadb:11.8
+    container_name: atlas-ti-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?Configure MARIADB_ROOT_PASSWORD no .env}
+      MARIADB_DATABASE: AtlasTI
+      MARIADB_USER: atlas_ti
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?Configure MARIADB_PASSWORD no .env}
+    ports:
+      - "192.168.20.19:8060:3306"
+    volumes:
+      - atlas-ti-mariadb-data:/var/lib/mysql
+    command: ["--default-time-zone=+00:00"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: atlas-ti-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__AtlasTi: "Server=mariadb;Port=3306;Database=AtlasTI;User ID=atlas_ti;Password=${MARIADB_PASSWORD};SslMode=Preferred"
+      Jwt__Issuer: AtlasTI.Api
+      Jwt__Audience: AtlasTI.Web
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Configure JWT_SIGNING_KEY no .env}
+      DataProtection__KeysPath: /app/App_Data/DataProtectionKeys
+      DataProtection__KeyEncryptionCertificatePath: /run/secrets/atlas-ti-dp.pfx
+      DataProtection__KeyEncryptionCertificatePassword: ${DATA_PROTECTION_CERT_PASSWORD:?Configure DATA_PROTECTION_CERT_PASSWORD no .env}
+      DocumentFiles__RootPath: /var/lib/atlas-ti/documents
+      DatabaseBootstrap__InitializeOnStartup: "true"
+      DatabaseBootstrap__AdminExternalId: ${ATLAS_ADMIN_LOGIN:-icaro.admin}
+      DatabaseBootstrap__AdminName: ${ATLAS_ADMIN_NAME:-Administrador Atlas TI}
+      DatabaseBootstrap__AdminEmail: ${ATLAS_ADMIN_EMAIL:-icaro.admin@empresa.local}
+      Ldap__Host: ${LDAP_HOST:-192.168.20.14}
+      Ldap__SecondaryHost: ${LDAP_SECONDARY_HOST:-}
+      Ldap__Port: ${LDAP_PORT:-636}
+      Ldap__UserIdFormat: "${LDAP_USER_ID_FORMAT}"
+    volumes:
+      - atlas-ti-dataprotection:/app/App_Data/DataProtectionKeys
+      - atlas-ti-documents:/var/lib/atlas-ti/documents
+      - ./certs/atlas-ti-dp.pfx:/run/secrets/atlas-ti-dp.pfx:ro
+      - ./certs/ldap-ca:/usr/local/share/ca-certificates/atlas-ti:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    container_name: atlas-ti-web
+    ports:
+      - "192.168.20.19:5225:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  atlas-ti-mariadb-data:
+  atlas-ti-dataprotection:
+  atlas-ti-documents:

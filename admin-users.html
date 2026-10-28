@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>html.auth-check body{visibility:hidden}</style>
+<script>document.documentElement.classList.add('auth-check')</script><script src="auth.js"></script>
+  <link rel="icon" href="./atlas-tech.svg" type="image/svg+xml">
+  <title>Usuários — Atlas TI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="users-admin.css">
+  <style>
+    :root{font-family:'DM Sans',sans-serif;color:#20283a;background:#f6f7fb;font-synthesis:none}*{box-sizing:border-box}body{margin:0}.admin-layout{min-height:100vh;display:flex}.admin-sidebar{position:sticky;top:0;width:252px;height:100vh;padding:25px 17px 15px;background:#fff;border-right:1px solid #eceef3;display:flex;flex-direction:column;flex:none}.brand{height:37px;display:flex;align-items:center;gap:10px;padding-left:8px;text-decoration:none;color:#21283a;font:800 21px Manrope,sans-serif;letter-spacing:-1px}.brand img{width:32px;height:32px;border-radius:9px}.brand span span{font-weight:500;color:#8e95a6}.workspace{display:flex;align-items:center;gap:11px;margin:31px 0 29px;padding:11px 10px;border:1px solid #eff0f4;border-radius:10px;color:inherit;text-decoration:none}.workspace-icon{width:31px;height:31px;border-radius:8px;background:#f0effe;color:#6559db;display:grid;place-items:center}.admin-sidebar .workspace small,.nav-label{font-size:9px;letter-spacing:1.1px;color:#a0a6b5;font-weight:700;display:block}.workspace strong{display:block;font-size:12px;margin-top:4px}.admin-nav{display:grid;gap:3px}.admin-nav a{display:flex;align-items:center;gap:11px;padding:10px 11px;text-decoration:none;color:#697185;border-radius:8px;font-size:12px}.admin-nav a.active{color:#594ed0;background:#f2f0ff;font-weight:700}.admin-sidebar .bottom{margin-top:auto}.admin-sidebar .help{padding:14px;background:#f7f6ff;border:1px solid #eeeefa;border-radius:11px;font-size:11px;color:#697185}.admin-sidebar .help b{display:block;margin-bottom:5px;color:#30384a}.admin-sidebar .help a{display:block;margin-top:9px;color:#6459d7;text-decoration:none}.admin-main{flex:1;min-width:0}.wrap{max-width:1000px;margin:42px auto;padding:0 36px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.top a.back{font-size:12px;color:#6559d9;text-decoration:none}.card{background:#fff;border:1px solid #e9ebf1;border-radius:13px;padding:25px;margin:14px 0;box-shadow:0 5px 24px #25325708}.heading{margin-bottom:20px}.heading h1{font:700 24px Manrope;margin:0 0 7px}.heading p,.hint{font-size:12px;color:#838b9d;line-height:1.55}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:700;color:#51596b}.field input,.field select{height:39px;border:1px solid #e2e5ed;border-radius:7px;padding:0 10px;font:12px 'DM Sans';color:#343c4e;background:#fff}.field input:focus,.field select:focus{outline:0;border-color:#9a92e5;box-shadow:0 0 0 3px #f2f0ff}.jit-mappings{display:grid;gap:8px;margin:4px 0}.jit-map-row{display:grid;grid-template-columns:1fr 190px auto;gap:8px;align-items:center}.jit-map-row input,.jit-map-row select{height:37px;border:1px solid #e2e5ed;border-radius:7px;padding:0 10px;font:12px 'DM Sans';background:white}.jit-map-row button{height:35px;border:0;background:#fff0f0;color:#a34951;border-radius:7px;cursor:pointer}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.button{border:1px solid #e2e5ed;border-radius:7px;background:#fff;padding:10px 14px;color:#626a7d;font:600 11px 'DM Sans';cursor:pointer}.button.primary{border-color:#6559d9;background:#6559d9;color:#fff}.button:disabled{opacity:.55;cursor:wait}.message{font-size:11px;padding:10px 12px;border-radius:7px;margin:15px 0 0;display:none}.message.show{display:block}.message.error{background:#fff0f0;color:#aa4e57}.message.ok{background:#eaf7f1;color:#287b68}.login{max-width:440px;margin:70px auto}.login .field{margin:13px 0}.status{font-size:10px;color:#8a92a3}.tag{font-size:10px;color:#665bd5;background:#f0efff;padding:5px 8px;border-radius:20px}.row{display:flex;align-items:center;gap:12px}.hidden{display:none!important}@media(max-width:700px){.admin-sidebar{width:75px;padding:20px 8px}.admin-sidebar .brand span,.admin-sidebar .workspace>span:not(.workspace-icon),.admin-sidebar .nav-label,.admin-nav a span:last-child,.admin-sidebar .bottom{display:none}.admin-nav a{font-size:0;justify-content:center}.admin-nav a span:first-child{font-size:17px}.workspace{justify-content:center;padding:8px;margin:20px 0}.wrap{margin-top:24px;padding:0 16px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.card{padding:19px}.jit-map-row{grid-template-columns:1fr}.jit-map-row button{justify-self:start;padding:0 12px}}
+    .wrap.wide{max-width:1120px}
+  </style>
+</head>
+<body>
+  <div class="admin-layout"><aside class="admin-sidebar"><a class="brand" href="./index.html"><img src="./atlas-tech.svg" alt=""><span>atlas<span>.ti</span></span></a><a class="workspace" href="./index.html"><span class="workspace-icon">◈</span><span><small>MÓDULO ATUAL</small><strong>Biblioteca de TI</strong></span></a><div class="nav-label">ADMINISTRAÇÃO</div><nav class="admin-nav"><a href="./index.html"><span>▤</span><span>Biblioteca</span></a><a href="./admin-settings.html"><span>⌘</span><span>Active Directory</span></a><a href="./admin-users.html" class="active" aria-current="page"><span>♙</span><span>Usuários</span></a><a href="./alert-settings.html"><span>⚙</span><span>Alertas do sistema</span></a><a href="./notifications.html"><span>◷</span><span>Histórico de alertas</span></a></nav><div class="bottom"><div class="help"><b>Precisa de ajuda?</b>Consulte as instruções do Atlas.<a href="./guide.html">Abrir guia ↗</a></div></div></aside><main class="admin-main"><div class="wrap wide">
+    <div class="heading"><div class="row"><h1>Usuários e grupos</h1><span class="tag">Administração</span></div><p>Veja quem tem acesso, ajuste os grupos de cada conta e acompanhe as alterações. A mesma tela está disponível em pop-up dentro da Biblioteca.</p></div>
+    <div id="usersApp" aria-live="polite"></div>
+  </div></main></div>
+  <script src="admin-nav.js"></script>
+  <script src="users-admin.js"></script>
+  <script>
+  (async () => {
+    const root = document.getElementById('usersApp'), token = sessionStorage.getItem('atlas-ti-admin-token');
+    try {
+      const response = await fetch('/api/me', { headers: { Authorization: 'Bearer ' + token } });
+      if (!response.ok) throw new Error('Sua sessão expirou. Entre novamente.');
+      const identity = await response.json();
+      const tabFor = view => ({ profile: 'users', group: 'groups' }[view.type] || view.type);
+      window.AtlasUsers.mount(root, { mode: 'page', identity, tab: location.hash.replace('#', '') || 'users', onRender: view => history.replaceState(null, '', '#' + tabFor(view)) });
+    } catch (error) { root.innerHTML = '<div class="card"><b>Não foi possível abrir a página.</b><p class="hint">' + String(error.message).replace(/[<>&]/g, '') + '</p></div>'; }
+  })();
+  </script>
+</body>
+</html>
