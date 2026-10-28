@@ -1,6 +1,6 @@
 # Atlas TI — documentação de TI
 
-Aplicação web e API ASP.NET Core 10 para manuais e POPs de TI. A implantação usa três serviços: MariaDB 11.8 com InnoDB, API e site estático Nginx. O endereço planejado é `192.168.20.29`, com o site em `http://192.168.20.29:5225` e o banco em `192.168.20.29:8060`.
+Aplicação web e API ASP.NET Core 10 para manuais e POPs de TI. A implantação usa três serviços: MariaDB 11.8 com InnoDB, API e site estático Nginx. 
 
 ## Limpeza dos documentos de exemplo
 
